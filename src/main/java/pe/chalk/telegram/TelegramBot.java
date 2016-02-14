@@ -105,7 +105,7 @@ public class TelegramBot extends Thread {
 
     public void getUpdates(){
         final JSONObject parameters = new JSONObject();
-        if(Update.latestId > 0) parameters.put("offset", Update.latestId);
+        if(Update.latestId > 0) parameters.put("offset", Update.latestId + 1);
 
         final Response response = this.request("getUpdates", parameters);
 
