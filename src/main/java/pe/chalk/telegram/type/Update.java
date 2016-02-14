@@ -10,7 +10,7 @@ import pe.chalk.telegram.type.message.Message;
  * @since 2016-02-02
  */
 public class Update implements Identified<Integer> {
-    private static int latestId;
+    public static int latestId = 0;
 
     private final int id;
     private final Message message;

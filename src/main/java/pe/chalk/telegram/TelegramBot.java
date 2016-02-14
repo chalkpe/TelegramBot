@@ -3,7 +3,7 @@ package pe.chalk.telegram;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import pe.chalk.telegram.handler.MessageHandler;
+import pe.chalk.telegram.handler.UpdateHandler;
 import pe.chalk.telegram.type.Response;
 import pe.chalk.telegram.type.Update;
 import pe.chalk.telegram.type.user.User;
@@ -29,13 +29,13 @@ public class TelegramBot extends Thread {
     public static final String REQUEST_URL = "https://api.telegram.org/bot%s/%s";
 
     protected final String token;
-    protected final List<MessageHandler> handlers;
+    protected final List<UpdateHandler> handlers;
 
     public TelegramBot(final String token){
         this(token, new ArrayList<>());
     }
 
-    public TelegramBot(final String token, final List<MessageHandler> handlers){
+    public TelegramBot(final String token, final List<UpdateHandler> handlers){
         Objects.requireNonNull(token);
         Objects.requireNonNull(handlers);
 
@@ -47,15 +47,15 @@ public class TelegramBot extends Thread {
         return this.token;
     }
 
-    public List<MessageHandler> getHandlers(){
+    public List<UpdateHandler> getHandlers(){
         return this.handlers;
     }
 
-    public boolean addHandler(final MessageHandler handler){
+    public boolean addHandler(final UpdateHandler handler){
         return this.handlers.add(handler);
     }
 
-    public boolean removeHandler(final MessageHandler handler){
+    public boolean removeHandler(final UpdateHandler handler){
         return this.handlers.remove(handler);
     }
 
@@ -104,8 +104,12 @@ public class TelegramBot extends Thread {
     }
 
     public void getUpdates(){
-        final Response response = this.request("getUpdates");
+        final JSONObject parameters = new JSONObject();
+        if(Update.latestId > 0) parameters.put("offset", Update.latestId);
+
+        final Response response = this.request("getUpdates", parameters);
+
         final List<Update> updates = JSONHelper.buildStream((JSONArray) response.getResult(), JSONObject.class).map(Update::create).collect(Collectors.toList());
-        if(!updates.isEmpty()) this.getHandlers().forEach(handler -> handler.handleMessage(response));
+        if(!updates.isEmpty()) this.getHandlers().forEach(handler -> handler.handleMessage(updates));
     }
 }
