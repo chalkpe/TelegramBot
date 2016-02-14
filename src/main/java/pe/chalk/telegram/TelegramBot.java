@@ -1,6 +1,5 @@
 package pe.chalk.telegram;
 
-import com.sun.istack.internal.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -105,7 +104,7 @@ public class TelegramBot extends Thread {
     }
 
     public void getUpdates(){
-        final Response response = this.request("getUpdates", new JSONObject());
+        final Response response = this.request("getUpdates");
         final List<Update> updates = JSONHelper.buildStream((JSONArray) response.getResult(), JSONObject.class).map(Update::create).collect(Collectors.toList());
         if(!updates.isEmpty()) this.getHandlers().forEach(handler -> handler.handleMessage(response));
     }

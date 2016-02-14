@@ -2,8 +2,6 @@ package pe.chalk.telegram.util;
 
 import org.json.JSONArray;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

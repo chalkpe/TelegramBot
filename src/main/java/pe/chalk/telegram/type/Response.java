@@ -1,11 +1,6 @@
 package pe.chalk.telegram.type;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
-import pe.chalk.telegram.util.JSONHelper;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author ChalkPE <chalkpe@gmail.com>
