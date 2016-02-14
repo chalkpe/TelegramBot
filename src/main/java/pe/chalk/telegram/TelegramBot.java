@@ -3,7 +3,7 @@ package pe.chalk.telegram;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import pe.chalk.telegram.handler.MessageHandler;
-import pe.chalk.telegram.model.Response;
+import pe.chalk.telegram.type.Response;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

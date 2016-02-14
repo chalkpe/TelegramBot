@@ -1,6 +1,6 @@
 package pe.chalk.telegram.handler;
 
-import pe.chalk.telegram.model.Response;
+import pe.chalk.telegram.type.Response;
 
 /**
  * @author ChalkPE <chalkpe@gmail.com>
