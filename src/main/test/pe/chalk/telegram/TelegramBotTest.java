@@ -58,7 +58,9 @@ public class TelegramBotTest {
     }
 
     @Test
-    public void testInterrupt(){
+    public void testInterrupt() throws InterruptedException {
+        Thread.sleep(2000);
+
         bot.interrupt();
         assertFalse("Thread dead", bot.isAlive());
     }
