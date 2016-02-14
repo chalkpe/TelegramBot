@@ -13,16 +13,16 @@ public class PrivateChat extends Chat implements Named, Usernamed {
     private final String firstName;
     private final String lastName;
 
-    protected PrivateChat(final int id, final String username, final String firstName, final String lastName){
-        super(id, Type.PRIVATE);
+    protected PrivateChat(final JSONObject json){
+        super(json);
 
-        this.username = username;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.username  = json.optString("username", null);
+        this.firstName = json.optString("first_name", null);
+        this.lastName  = json.optString("last_name", null);
     }
 
     public static PrivateChat create(final JSONObject json){
-        return new PrivateChat(json.getInt("id"), json.getString("username"), json.getString("first_name"), json.getString("last_name"));
+        return new PrivateChat(json);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package pe.chalk.telegram.type;
 
 import org.json.JSONObject;
+import pe.chalk.telegram.type.inline.ChosenInlineResult;
+import pe.chalk.telegram.type.inline.InlineQuery;
 import pe.chalk.telegram.type.message.Message;
 
 /**
@@ -8,16 +10,24 @@ import pe.chalk.telegram.type.message.Message;
  * @since 2016-02-02
  */
 public class Update implements Identified<Integer> {
+    private static int latestId;
+
     private final int id;
     private final Message message;
     private final InlineQuery inlineQuery;
     private final ChosenInlineResult chosenInlineResult;
 
-    public Update(final JSONObject json){
+    private Update(final JSONObject json){
         this.id = json.getInt("update_id");
-        this.message = null;
-        this.inlineQuery = null;
-        this.chosenInlineResult = null;
+        this.message = json.has("message") ? Message.create(json.getJSONObject("message")) : null;
+        this.inlineQuery = json.has("inline_query") ? InlineQuery.create(json) : null;
+        this.chosenInlineResult = json.has("chosen_inline_result") ? ChosenInlineResult.create(json) : null;
+
+        if(id > Update.latestId) Update.latestId = id;
+    }
+
+    public static Update create(final JSONObject json){
+        return new Update(json);
     }
 
     @Override

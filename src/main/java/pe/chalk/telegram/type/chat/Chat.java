@@ -18,9 +18,9 @@ public abstract class Chat implements Identified<Integer> {
     private final int id;
     private final String type;
 
-    protected Chat(final int id, final String type){
-        this.id = id;
-        this.type = type;
+    protected Chat(final JSONObject json){
+        this.id = json.getInt("id");
+        this.type = json.getString("type");
     }
 
     public static Chat create(final JSONObject json){
@@ -29,8 +29,10 @@ public abstract class Chat implements Identified<Integer> {
                 return PrivateChat.create(json);
 
             case Type.GROUP:
-            case Type.SUPERGROUP:
                 return Group.create(json);
+
+            case Type.SUPERGROUP:
+                return Supergroup.create(json);
 
             case Type.CHANNEL:
                 return Channel.create(json);

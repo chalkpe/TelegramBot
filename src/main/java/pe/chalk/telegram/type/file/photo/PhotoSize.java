@@ -1,5 +1,6 @@
 package pe.chalk.telegram.type.file.photo;
 
+import org.json.JSONObject;
 import pe.chalk.telegram.type.file.AbstractFile;
 
 /**
@@ -7,7 +8,11 @@ import pe.chalk.telegram.type.file.AbstractFile;
  * @since 2016-02-02
  */
 public class PhotoSize extends AbstractFile {
-    protected PhotoSize(final String id, final int size){
-        super(id, size);
+    private PhotoSize(final JSONObject json){
+        super(json);
+    }
+
+    public static PhotoSize create(final JSONObject json){
+        return new PhotoSize(json);
     }
 }

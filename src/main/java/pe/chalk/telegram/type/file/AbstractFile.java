@@ -1,5 +1,6 @@
 package pe.chalk.telegram.type.file;
 
+import org.json.JSONObject;
 import pe.chalk.telegram.type.Identified;
 
 /**
@@ -10,9 +11,9 @@ public abstract class AbstractFile implements Identified<String> {
     private final String id;
     private final int size;
 
-    protected AbstractFile(final String id, final int size){
-        this.id = id;
-        this.size = size;
+    protected AbstractFile(final JSONObject json){
+        this.id = json.getString("file_id");
+        this.size = json.getInt("file_size");
     }
 
     @Override

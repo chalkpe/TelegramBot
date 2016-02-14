@@ -10,13 +10,13 @@ import pe.chalk.telegram.type.user.Usernamed;
 public class Channel extends TitledChat implements Usernamed {
     private final String username;
 
-    private Channel(int id, String title, String username){
-        super(id, Type.CHANNEL, title);
-        this.username = username;
+    private Channel(final JSONObject json){
+        super(json);
+        this.username = json.optString("username", null);
     }
 
     public static Channel create(final JSONObject json){
-        return new Channel(json.getInt("id"), json.getString("title"), json.getString("username"));
+        return new Channel(json);
     }
 
     @Override

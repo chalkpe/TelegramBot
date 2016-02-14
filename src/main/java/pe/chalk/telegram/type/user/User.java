@@ -1,6 +1,5 @@
 package pe.chalk.telegram.type.user;
 
-import com.sun.istack.internal.Nullable;
 import org.json.JSONObject;
 
 /**
@@ -10,14 +9,18 @@ import org.json.JSONObject;
 public class User implements Named, Usernamed {
     private final int id;
     private final String firstName;
-    @Nullable private final String lastName;
-    @Nullable private final String username;
+    private final String lastName;
+    private final String username;
 
-    public User(final JSONObject json) {
-        this.id        = json.getInt("id");
+    private User(final JSONObject json){
+        this.id = json.getInt("id");
         this.firstName = json.getString("first_name");
-        this.lastName  = json.has("last_name") ? json.getString("last_name") : null;
-        this.username  = json.has("username")  ? json.getString("username")  : null;
+        this.lastName = json.optString("last_name", null);
+        this.username = json.optString("username", null);
+    }
+
+    public static User create(final JSONObject json){
+        return new User(json);
     }
 
     public int getId(){

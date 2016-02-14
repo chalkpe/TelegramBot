@@ -7,16 +7,11 @@ import org.json.JSONObject;
  * @since 2016-02-02
  */
 public class Group extends TitledChat {
-    protected Group(final int id, final String title){
-        this(id, Type.GROUP, title);
-    }
-
-    protected Group(final int id, final String type, final String title){
-        super(id, type, title);
+    protected Group(final JSONObject json){
+        super(json);
     }
 
     public static Group create(final JSONObject json){
-        if(json.getString("type").equals(Type.SUPERGROUP)) return new Supergroup(json.getInt("id"), json.getString("title"));
-        else return new Group(json.getInt("id"), json.getString("title"));
+        return new Group(json);
     }
 }

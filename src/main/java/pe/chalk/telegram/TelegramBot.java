@@ -1,9 +1,14 @@
 package pe.chalk.telegram;
 
+import com.sun.istack.internal.logging.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import pe.chalk.telegram.handler.MessageHandler;
 import pe.chalk.telegram.type.Response;
+import pe.chalk.telegram.type.Update;
+import pe.chalk.telegram.type.user.User;
+import pe.chalk.telegram.util.JSONHelper;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,8 +17,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author ChalkPE <chalkpe@gmail.com>
@@ -61,30 +68,45 @@ public class TelegramBot extends Thread {
         }
     }
 
+    public Response request(final String method){
+        return this.request(method, new JSONObject());
+    }
+
     public Response request(final String method, final JSONObject parameters){
         try{
             final URL url = new URL(String.format(TelegramBot.REQUEST_URL, this.getToken(), method));
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoInput(true);
-            connection.setDoOutput(true);
             connection.setConnectTimeout(5000);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 
-            try(OutputStream stream = connection.getOutputStream()){
-                stream.write(parameters.toString().getBytes(StandardCharsets.UTF_8));
+            if(parameters.length() > 0){
+                connection.setDoOutput(true);
+                try(OutputStream stream = connection.getOutputStream()){
+                    stream.write(parameters.toString().getBytes(StandardCharsets.UTF_8));
+                }
             }
 
-            return new Response(new JSONObject(new JSONTokener(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))));
+            final JSONObject response = new JSONObject(new JSONTokener(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8)));
+            System.out.println(new Date().toString() + " " + response.toString());
+
+            return Response.create(response);
         }catch(IOException e){
             e.printStackTrace();
             return null;
         }
     }
 
+    public User getMe(){
+        final Response response = this.request("getMe");
+        return User.create((JSONObject) response.getResult());
+    }
+
     public void getUpdates(){
         final Response response = this.request("getUpdates", new JSONObject());
-        if(response != null) this.getHandlers().forEach(handler -> handler.handleMessage(response));
+        final List<Update> updates = JSONHelper.buildStream((JSONArray) response.getResult(), JSONObject.class).map(Update::create).collect(Collectors.toList());
+        if(!updates.isEmpty()) this.getHandlers().forEach(handler -> handler.handleMessage(response));
     }
 }

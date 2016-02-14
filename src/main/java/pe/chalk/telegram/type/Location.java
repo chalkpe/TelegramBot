@@ -1,23 +1,29 @@
 package pe.chalk.telegram.type;
 
+import org.json.JSONObject;
+
 /**
  * @author ChalkPE <chalkpe@gmail.com>
  * @since 2016-02-02
  */
 public class Location {
-    private final float longitude;
-    private final float latitude;
+    private double longitude;
+    private double latitude;
 
-    private Location(final float longitude, final float latitude){
-        this.longitude = longitude;
-        this.latitude = latitude;
+    private Location(final JSONObject json){
+        this.longitude = json.getDouble("longitude");
+        this.latitude = json.getDouble("latitude");
     }
 
-    public float getLongitude(){
+    public static Location create(final JSONObject json){
+        return new Location(json);
+    }
+
+    public double getLongitude(){
         return this.longitude;
     }
 
-    public float getLatitude(){
+    public double getLatitude(){
         return this.latitude;
     }
 }

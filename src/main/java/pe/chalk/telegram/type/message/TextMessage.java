@@ -1,6 +1,6 @@
 package pe.chalk.telegram.type.message;
 
-import pe.chalk.telegram.type.chat.Chat;
+import org.json.JSONObject;
 
 /**
  * @author ChalkPE <chalkpe@gmail.com>
@@ -9,9 +9,13 @@ import pe.chalk.telegram.type.chat.Chat;
 public class TextMessage extends Message {
     private final String text;
 
-    private TextMessage(final int id, final int date, final Chat chat, final String text){
-        super(id, date, chat);
-        this.text = text;
+    private TextMessage(final JSONObject json){
+        super(json);
+        this.text = json.getString("text");
+    }
+
+    public static TextMessage create(final JSONObject json){
+        return new TextMessage(json);
     }
 
     public String getText(){
