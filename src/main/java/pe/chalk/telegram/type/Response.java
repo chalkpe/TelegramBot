@@ -2,6 +2,8 @@ package pe.chalk.telegram.type;
 
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 /**
  * @author ChalkPE <chalkpe@gmail.com>
  * @since 2016-02-02
@@ -33,6 +35,7 @@ public class Response {
     }
 
     public Object getResult(){
+        if(!this.isOk() || Objects.isNull(this.result)) throw new IllegalStateException(this.getErrorCode() + ": " + this.getDescription());
         return this.result;
     }
 

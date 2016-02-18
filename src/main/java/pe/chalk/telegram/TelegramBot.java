@@ -6,8 +6,10 @@ import org.json.JSONTokener;
 import pe.chalk.telegram.handler.UpdateHandler;
 import pe.chalk.telegram.type.Response;
 import pe.chalk.telegram.type.Update;
+import pe.chalk.telegram.type.message.Message;
 import pe.chalk.telegram.type.user.User;
 import pe.chalk.telegram.util.JSONHelper;
+import pe.chalk.telegram.util.MessageOption;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -63,7 +65,9 @@ public class TelegramBot extends Thread {
     public void run(){
         while(true){
             if(Thread.interrupted()) break;
-            this.getUpdates();
+
+            final List<Update> updates = this.getUpdates();
+            if(!updates.isEmpty()) this.getHandlers().forEach(handler -> handler.handleMessage(updates));
         }
     }
 
@@ -103,13 +107,16 @@ public class TelegramBot extends Thread {
         return User.create((JSONObject) response.getResult());
     }
 
-    public void getUpdates(){
+    public List<Update> getUpdates(){
         final JSONObject parameters = new JSONObject();
         if(Update.latestId > 0) parameters.put("offset", Update.latestId + 1);
 
         final Response response = this.request("getUpdates", parameters);
+        return JSONHelper.buildStream((JSONArray) response.getResult(), JSONObject.class).map(Update::create).collect(Collectors.toList());
+    }
 
-        final List<Update> updates = JSONHelper.buildStream((JSONArray) response.getResult(), JSONObject.class).map(Update::create).collect(Collectors.toList());
-        if(!updates.isEmpty()) this.getHandlers().forEach(handler -> handler.handleMessage(updates));
+    public Message sendMessage(final MessageOption messageOption){
+        final Response response = this.request("sendMessage", messageOption.getParameters());
+        return Message.create((JSONObject) response.getResult());
     }
 }
