@@ -18,9 +18,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -93,7 +93,7 @@ public class TelegramBot extends Thread {
             }
 
             final JSONObject response = new JSONObject(new JSONTokener(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8)));
-            System.out.println(new Date().toString() + " " + response.toString());
+            Logger.getLogger("TelegramBot").finer(String.format("%s%n", response.toString()));
 
             return Response.create(response);
         }catch(IOException e){

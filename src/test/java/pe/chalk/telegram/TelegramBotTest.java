@@ -7,9 +7,11 @@ import pe.chalk.telegram.type.user.User;
 import pe.chalk.telegram.util.MessageOption;
 import pe.chalk.telegram.util.ParseMode;
 
-import java.util.Date;
+import java.io.OutputStream;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.*;
 
 import static org.junit.Assert.*;
 
@@ -23,6 +25,20 @@ public class TelegramBotTest {
 
     public TelegramBotTest(){
         bot = new TelegramBot(token);
+
+        Logger.getLogger("TelegramBot").setUseParentHandlers(false);
+        for(final Handler handler: Logger.getLogger("TelegramBot").getHandlers()) Logger.getLogger("TelegramBot").removeHandler(handler);
+
+        final ConsoleHandler handler = new ConsoleHandler(){
+            @Override
+            protected synchronized void setOutputStream(final OutputStream out) throws SecurityException {
+                super.setOutputStream(System.out);
+            }
+        };
+        handler.setLevel(Level.FINER);
+
+        Logger.getLogger("TelegramBot").setLevel(handler.getLevel());
+        Logger.getLogger("TelegramBot").addHandler(handler);
     }
 
     @Test
@@ -46,12 +62,12 @@ public class TelegramBotTest {
         final CompletableFuture<TextMessage> future = new CompletableFuture<>();
         bot.addHandler(updates -> updates.forEach(update -> {
             final Message message = update.getMessage();
-            if(message != null && message instanceof TextMessage){
-                final TextMessage textMessage = (TextMessage) message;
-                System.out.printf("%s [%d] %s - %s%n", new Date(), message.getChat().getId(), message.getId(), textMessage.getText());
+            if(Objects.isNull(message) || !(message instanceof TextMessage)) return;
 
-                if(textMessage.getText().startsWith("@Test ")) future.complete(textMessage);
-            }
+            final TextMessage textMessage = (TextMessage) message;
+            Logger.getLogger("TelegramBot").info(String.format("[%d] %s - %s%n", message.getChat().getId(), message.getId(), textMessage.getText()));
+
+            if(textMessage.getText().startsWith("@Test ")) future.complete(textMessage);
         }));
 
         assertFalse(bot.getHandlers().isEmpty());
