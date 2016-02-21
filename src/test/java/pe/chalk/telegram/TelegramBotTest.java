@@ -1,6 +1,5 @@
 package pe.chalk.telegram;
 
-import org.junit.After;
 import org.junit.Test;
 import pe.chalk.telegram.method.MeGetter;
 import pe.chalk.telegram.type.chat.TitledChat;
@@ -96,15 +95,15 @@ public class TelegramBotTest {
         assertEquals("@Test hello!", textMessage.getText());
 
         final int chatId = textMessage.getChat().getId();
-        final String reply = String.format("*[%d]* Test _passed!_\n\n%s%s%sI'm on *%d*%s.",
+        final String reply = String.format("<b>[%d]</b> <a href=\"https://github.com/ChalkPE/TelegramBot\">Test</a> <i>passed!</i>\n\n%s%s%sI'm on <b>%d</b>%s.",
                 textMessage.getId(),
-                textMessage.hasFrom() ? ("Hi, *" + textMessage.getFrom().getFullName() + "*") : "",
-                (textMessage.hasFrom() && textMessage.getFrom().hasUsername()) ? (", who username is *@" + textMessage.getFrom().getUsername() + "*") : "",
+                textMessage.hasFrom() ? ("Hi, <b>" + encodeHTMLEntities(textMessage.getFrom().getFullName()) + "</b>") : "",
+                (textMessage.hasFrom() && textMessage.getFrom().hasUsername()) ? (", who username is <b>@" + encodeHTMLEntities(textMessage.getFrom().getUsername()) + "</b>") : "",
                 textMessage.hasFrom() ? "!\n" : "",
                 textMessage.getChat().getId(),
-                (textMessage.getChat() instanceof TitledChat) ? (", where the title is *" + ((TitledChat) textMessage.getChat()).getTitle() + "*") : "");
+                (textMessage.getChat() instanceof TitledChat) ? (", where the title is <b>" + encodeHTMLEntities(((TitledChat) textMessage.getChat()).getTitle()) + "</b>") : "");
 
-        final Message sentMessage = new TextMessageSender(chatId, reply).parseMode(ParseMode.MARKDOWN).replyToMessage(textMessage).send(bot);
+        final Message sentMessage = new TextMessageSender(chatId, reply).parseMode(ParseMode.HTML).replyToMessage(textMessage).disableWebPagePreview(true).send(bot);
         assertEquals((long) chatId, (long) sentMessage.getChat().getId());
     }
 
@@ -114,5 +113,9 @@ public class TelegramBotTest {
 
         Thread.sleep(2000);
         assertFalse("Thread dead", bot.isAlive());
+    }
+
+    public String encodeHTMLEntities(final String str){
+        return str.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\"", "&quot;");
     }
 }
