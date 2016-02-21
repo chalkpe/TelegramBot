@@ -1,4 +1,4 @@
-package pe.chalk.telegram.type.keyboard;
+package pe.chalk.telegram.type.reply;
 
 import org.json.JSONObject;
 
