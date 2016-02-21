@@ -3,6 +3,7 @@ package pe.chalk.telegram.type.message;
 import org.json.JSONObject;
 import pe.chalk.telegram.type.Identified;
 import pe.chalk.telegram.type.chat.Chat;
+import pe.chalk.telegram.type.user.User;
 
 import java.util.Objects;
 
@@ -15,6 +16,7 @@ public class Message implements Identified<Integer> {
     private final int date;
     private final Chat chat;
 
+    private final User from;
     private final Message replyToMessage;
 
     protected Message(final JSONObject json){
@@ -22,6 +24,7 @@ public class Message implements Identified<Integer> {
         this.date = json.getInt("date");
         this.chat = Chat.create(json.getJSONObject("chat"));
 
+        this.from           = json.has("from")             ? User.create(json.getJSONObject("from"))                : null;
         this.replyToMessage = json.has("reply_to_message") ? Message.create(json.getJSONObject("reply_to_message")) : null;
     }
 
@@ -57,5 +60,13 @@ public class Message implements Identified<Integer> {
 
     public boolean isReply(){
         return Objects.nonNull(this.getReplyToMessage());
+    }
+
+    public User getFrom(){
+        return this.from;
+    }
+
+    public boolean hasFrom(){
+        return Objects.nonNull(this.getFrom());
     }
 }
