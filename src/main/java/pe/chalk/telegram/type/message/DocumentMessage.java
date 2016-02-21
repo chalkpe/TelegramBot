@@ -12,7 +12,6 @@ public class DocumentMessage extends Message {
     private DocumentMessage(JSONObject json){
         super(json);
         this.document = Document.create(json.getJSONObject("document"));
-
     }
 
     public static DocumentMessage create(final JSONObject json){

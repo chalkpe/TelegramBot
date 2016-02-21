@@ -1,29 +1,31 @@
 package pe.chalk.telegram.type.user;
 
 import org.json.JSONObject;
+import pe.chalk.telegram.type.Identified;
 
 /**
  * @author ChalkPE <chalkpe@gmail.com>
  * @since 2016-02-02
  */
-public class User implements Named, Usernamed {
+public class User implements Identified<Integer>, Named, Usernamed {
     private final int id;
     private final String firstName;
     private final String lastName;
     private final String username;
 
     private User(final JSONObject json){
-        this.id = json.getInt("id");
+        this.id        = json.getInt("id");
         this.firstName = json.getString("first_name");
-        this.lastName = json.optString("last_name", null);
-        this.username = json.optString("username", null);
+        this.lastName  = json.optString("last_name", null);
+        this.username  = json.optString("username", null);
     }
 
     public static User create(final JSONObject json){
         return new User(json);
     }
 
-    public int getId(){
+    @Override
+    public Integer getId(){
         return this.id;
     }
 

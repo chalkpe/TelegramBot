@@ -6,7 +6,7 @@ import org.json.JSONObject;
  * @author ChalkPE <chalkpe@gmail.com>
  * @since 2016-02-03
  */
-public class File extends AbstractFile {
+public class File extends BaseFile {
     private final String path;
 
     private File(final JSONObject json){

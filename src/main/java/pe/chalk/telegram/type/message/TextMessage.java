@@ -8,7 +8,6 @@ import org.json.JSONObject;
  */
 public class TextMessage extends Message {
     private final String text;
-
     private TextMessage(final JSONObject json){
         super(json);
         this.text = json.getString("text");

@@ -15,9 +15,9 @@ public class Contact implements Named, Identified<Integer> {
 
     private Contact(final JSONObject json){
         this.phoneNumber = json.getString("phone_number");
-        this.firstName = json.getString("first_name");
-        this.lastName = json.optString("last_name", null);
-        this.userId = json.optInt("user_id");
+        this.firstName   = json.getString("first_name");
+        this.lastName    = json.optString("last_name", null);
+        this.userId      = json.optInt("user_id");
     }
 
     public static Contact create(final JSONObject json){

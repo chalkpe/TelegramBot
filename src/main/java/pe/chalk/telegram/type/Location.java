@@ -12,7 +12,7 @@ public class Location {
 
     private Location(final JSONObject json){
         this.longitude = json.getDouble("longitude");
-        this.latitude = json.getDouble("latitude");
+        this.latitude  = json.getDouble("latitude");
     }
 
     public static Location create(final JSONObject json){

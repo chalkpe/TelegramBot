@@ -12,7 +12,6 @@ public class StickerMessage extends Message {
     private StickerMessage(JSONObject json){
         super(json);
         this.sticker = Sticker.create(json.getJSONObject("sticker"));
-
     }
 
     public static StickerMessage create(final JSONObject json){

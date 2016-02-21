@@ -18,10 +18,10 @@ public class Update implements Identified<Integer> {
     private final ChosenInlineResult chosenInlineResult;
 
     private Update(final JSONObject json){
-        this.id = json.getInt("update_id");
-        this.message = json.has("message") ? Message.create(json.getJSONObject("message")) : null;
-        this.inlineQuery = json.has("inline_query") ? InlineQuery.create(json) : null;
-        this.chosenInlineResult = json.has("chosen_inline_result") ? ChosenInlineResult.create(json) : null;
+        this.id                 = json.getInt("update_id");
+        this.message            = json.has("message")              ? Message.create(json.getJSONObject("message"))                         : null;
+        this.inlineQuery        = json.has("inline_query")         ? InlineQuery.create(json.getJSONObject("inline_query"))                : null;
+        this.chosenInlineResult = json.has("chosen_inline_result") ? ChosenInlineResult.create(json.getJSONObject("chosen_inline_result")) : null;
 
         if(id > Update.latestId) Update.latestId = id;
     }

@@ -16,10 +16,10 @@ public class Response {
     private final int errorCode;
 
     private Response(JSONObject json){
-        this.ok = json.getBoolean("ok");
-        this.description = json.has("description") ? json.getString("description") : null;
-        this.result = json.has("result") ? json.get("result") : null;
-        this.errorCode = json.has("error_code") ? json.getInt("error_code") : 200;
+        this.ok          = json.getBoolean("ok");
+        this.description = json.optString("description", null);
+        this.result      = json.opt("result");
+        this.errorCode   = json.optInt("error_code", 200);
     }
 
     public static Response create(final JSONObject json){

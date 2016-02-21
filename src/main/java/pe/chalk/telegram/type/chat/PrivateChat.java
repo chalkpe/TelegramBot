@@ -15,7 +15,6 @@ public class PrivateChat extends Chat implements Named, Usernamed {
 
     protected PrivateChat(final JSONObject json){
         super(json);
-
         this.username  = json.optString("username", null);
         this.firstName = json.optString("first_name", null);
         this.lastName  = json.optString("last_name", null);

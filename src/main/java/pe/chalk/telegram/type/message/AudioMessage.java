@@ -1,7 +1,7 @@
 package pe.chalk.telegram.type.message;
 
 import org.json.JSONObject;
-import pe.chalk.telegram.type.file.Audio;
+import pe.chalk.telegram.type.file.media.Audio;
 
 /**
  * @author ChalkPE <chalkpe@gmail.com>

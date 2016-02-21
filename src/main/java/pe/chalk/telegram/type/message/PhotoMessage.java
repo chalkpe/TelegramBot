@@ -9,7 +9,6 @@ import pe.chalk.telegram.type.file.photo.Photo;
  */
 public class PhotoMessage extends CaptionedMessage {
     private final Photo photo;
-
     private PhotoMessage(JSONObject json){
         super(json);
         this.photo = Photo.create(json.getJSONArray("photo"));

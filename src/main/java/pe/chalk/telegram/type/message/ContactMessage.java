@@ -17,4 +17,8 @@ public class ContactMessage extends Message {
     public static ContactMessage create(final JSONObject json){
         return new ContactMessage(json);
     }
+
+    public Contact getContact(){
+        return this.contact;
+    }
 }

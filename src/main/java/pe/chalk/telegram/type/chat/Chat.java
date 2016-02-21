@@ -19,7 +19,7 @@ public abstract class Chat implements Identified<Integer> {
     private final String type;
 
     protected Chat(final JSONObject json){
-        this.id = json.getInt("id");
+        this.id   = json.getInt("id");
         this.type = json.getString("type");
     }
 

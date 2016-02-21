@@ -12,7 +12,6 @@ public class LocationMessage extends Message {
     private LocationMessage(JSONObject json){
         super(json);
         this.location = Location.create(json.getJSONObject("location"));
-
     }
 
     public static LocationMessage create(final JSONObject json){
