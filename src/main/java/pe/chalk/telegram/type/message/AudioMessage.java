@@ -9,7 +9,7 @@ import pe.chalk.telegram.type.file.media.Audio;
  */
 public class AudioMessage extends Message {
     private final Audio audio;
-    public AudioMessage(JSONObject json){
+    private AudioMessage(JSONObject json){
         super(json);
         this.audio = Audio.create(json.getJSONObject("audio"));
     }

@@ -1,7 +1,9 @@
 package pe.chalk.telegram;
 
+import org.junit.After;
 import org.junit.Test;
 import pe.chalk.telegram.method.MeGetter;
+import pe.chalk.telegram.type.chat.TitledChat;
 import pe.chalk.telegram.type.message.Message;
 import pe.chalk.telegram.type.message.TextMessage;
 import pe.chalk.telegram.type.user.User;
@@ -24,22 +26,32 @@ public class TelegramBotTest {
     private final String token = System.getenv("TelegramBotToken");
     private final TelegramBot bot;
 
+    private final Level level = Level.ALL;
+    private Logger logger;
+
     public TelegramBotTest(){
+        this.initLogger();
         bot = new TelegramBot(token);
+    }
 
-        Logger.getLogger("TelegramBot").setUseParentHandlers(false);
-        for(final Handler handler: Logger.getLogger("TelegramBot").getHandlers()) Logger.getLogger("TelegramBot").removeHandler(handler);
+    private class StandardHandler extends ConsoleHandler {
+        public StandardHandler(){
+            this.setLevel(level);
+        }
 
-        final ConsoleHandler handler = new ConsoleHandler(){
-            @Override
-            protected synchronized void setOutputStream(final OutputStream out) throws SecurityException {
-                super.setOutputStream(System.out);
-            }
-        };
-        handler.setLevel(Level.FINER);
+        @Override
+        protected synchronized void setOutputStream(final OutputStream out) throws SecurityException {
+            super.setOutputStream(System.out);
+        }
+    }
 
-        Logger.getLogger("TelegramBot").setLevel(handler.getLevel());
-        Logger.getLogger("TelegramBot").addHandler(handler);
+    public void initLogger(){
+        logger = Logger.getLogger("TelegramBot");
+        for(Handler handler: logger.getHandlers()) logger.removeHandler(handler);
+
+        logger.setUseParentHandlers(false);
+        logger.addHandler(new StandardHandler());
+        logger.setLevel(level);
     }
 
     @Test
@@ -66,7 +78,13 @@ public class TelegramBotTest {
             if(Objects.isNull(message) || !(message instanceof TextMessage)) return;
 
             final TextMessage textMessage = (TextMessage) message;
-            Logger.getLogger("TelegramBot").info(String.format("[%d] %s - %s%n", message.getChat().getId(), message.getId(), textMessage.getText()));
+            logger.info(String.format("[%d] [%d]%s%s%s%n",
+                    message.getId(),
+                    message.getChat().getId(),
+                    (message.getChat() instanceof TitledChat) ? (" " + ((TitledChat) message.getChat()).getTitle() + " ") : " ",
+                    message.hasFrom() ? (" [" + message.getFrom().getId() + "] " + message.getFrom().getFullName() + (message.getFrom().hasUsername() ? " (@" + message.getFrom().getUsername() + ")" : " ") + " - ") : " ",
+                    textMessage.getText())
+            );
 
             if(textMessage.getText().startsWith("@Test ")) future.complete(textMessage);
         }));
@@ -78,7 +96,13 @@ public class TelegramBotTest {
         assertEquals("@Test hello!", textMessage.getText());
 
         final int chatId = textMessage.getChat().getId();
-        final String reply = String.format("\\[%d] Hi, *%d*!", chatId, textMessage.getId());
+        final String reply = String.format("*[%d]* Test _passed!_\n\n%s%s%sI'm on *%d*%s.",
+                textMessage.getId(),
+                textMessage.hasFrom() ? ("Hi, *" + textMessage.getFrom().getFullName() + "*") : "",
+                (textMessage.hasFrom() && textMessage.getFrom().hasUsername()) ? (", who username is *@" + textMessage.getFrom().getUsername() + "*") : "",
+                textMessage.hasFrom() ? "!\n" : "",
+                textMessage.getChat().getId(),
+                (textMessage.getChat() instanceof TitledChat) ? (", where the title is *" + ((TitledChat) textMessage.getChat()).getTitle() + "*") : "");
 
         final Message sentMessage = new TextMessageSender(chatId, reply).parseMode(ParseMode.MARKDOWN).replyToMessage(textMessage).send(bot);
         assertEquals((long) chatId, (long) sentMessage.getChat().getId());
@@ -86,9 +110,9 @@ public class TelegramBotTest {
 
     @Test
     public void testInterrupt() throws InterruptedException {
-        Thread.sleep(2000);
-
         bot.interrupt();
+
+        Thread.sleep(2000);
         assertFalse("Thread dead", bot.isAlive());
     }
 }

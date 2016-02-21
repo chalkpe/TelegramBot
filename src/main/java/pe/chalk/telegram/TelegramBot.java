@@ -1,16 +1,11 @@
 package pe.chalk.telegram;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import pe.chalk.telegram.handler.UpdateHandler;
 import pe.chalk.telegram.method.UpdateGetter;
 import pe.chalk.telegram.type.Response;
 import pe.chalk.telegram.type.Update;
-import pe.chalk.telegram.type.message.Message;
-import pe.chalk.telegram.type.user.User;
-import pe.chalk.telegram.util.JSONHelper;
-import pe.chalk.telegram.method.TextMessageSender;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * @author ChalkPE <chalkpe@gmail.com>
@@ -76,8 +70,8 @@ public class TelegramBot extends Thread {
         return this.request(method, new JSONObject());
     }
 
-    public Response request(final String method, final JSONObject parameters) {
-        try {
+    public Response request(final String method, final JSONObject parameters){
+        try{
             final URL url = new URL(String.format(TelegramBot.REQUEST_URL, this.getToken(), method));
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -86,18 +80,19 @@ public class TelegramBot extends Thread {
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 
-            if (parameters.length() > 0) {
+            if(parameters.length() > 0){
                 connection.setDoOutput(true);
-                try (OutputStream stream = connection.getOutputStream()) {
+                try(final OutputStream stream = connection.getOutputStream()){
                     stream.write(parameters.toString().getBytes(StandardCharsets.UTF_8));
                 }
+                Logger.getLogger("TelegramBot").finest(String.format("%s%n", parameters.toString(2)));
             }
 
             final JSONObject response = new JSONObject(new JSONTokener(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8)));
-            Logger.getLogger("TelegramBot").finer(String.format("%s%n", response.toString()));
+            Logger.getLogger("TelegramBot").finer(String.format("%s%n", response.toString(2)));
 
             return Response.create(response);
-        } catch (IOException e) {
+        }catch(IOException e){
             e.printStackTrace();
             return null;
         }

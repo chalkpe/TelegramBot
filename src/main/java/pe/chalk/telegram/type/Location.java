@@ -7,8 +7,8 @@ import org.json.JSONObject;
  * @since 2016-02-02
  */
 public class Location {
-    private double longitude;
-    private double latitude;
+    private final double longitude;
+    private final double latitude;
 
     private Location(final JSONObject json){
         this.longitude = json.getDouble("longitude");
