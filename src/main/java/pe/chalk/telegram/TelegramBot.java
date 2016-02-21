@@ -4,12 +4,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import pe.chalk.telegram.handler.UpdateHandler;
+import pe.chalk.telegram.method.UpdateGetter;
 import pe.chalk.telegram.type.Response;
 import pe.chalk.telegram.type.Update;
 import pe.chalk.telegram.type.message.Message;
 import pe.chalk.telegram.type.user.User;
 import pe.chalk.telegram.util.JSONHelper;
-import pe.chalk.telegram.util.MessageOption;
+import pe.chalk.telegram.method.TextMessageSender;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -66,7 +67,7 @@ public class TelegramBot extends Thread {
         while(true){
             if(Thread.interrupted()) break;
 
-            final List<Update> updates = this.getUpdates();
+            final List<Update> updates = new UpdateGetter().get(this);
             if(!updates.isEmpty()) this.getHandlers().forEach(handler -> handler.handleMessage(updates));
         }
     }
@@ -75,8 +76,8 @@ public class TelegramBot extends Thread {
         return this.request(method, new JSONObject());
     }
 
-    public Response request(final String method, final JSONObject parameters){
-        try{
+    public Response request(final String method, final JSONObject parameters) {
+        try {
             final URL url = new URL(String.format(TelegramBot.REQUEST_URL, this.getToken(), method));
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -85,9 +86,9 @@ public class TelegramBot extends Thread {
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 
-            if(parameters.length() > 0){
+            if (parameters.length() > 0) {
                 connection.setDoOutput(true);
-                try(OutputStream stream = connection.getOutputStream()){
+                try (OutputStream stream = connection.getOutputStream()) {
                     stream.write(parameters.toString().getBytes(StandardCharsets.UTF_8));
                 }
             }
@@ -96,27 +97,9 @@ public class TelegramBot extends Thread {
             Logger.getLogger("TelegramBot").finer(String.format("%s%n", response.toString()));
 
             return Response.create(response);
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
-    }
-
-    public User getMe(){
-        final Response response = this.request("getMe");
-        return User.create((JSONObject) response.getResult());
-    }
-
-    public List<Update> getUpdates(){
-        final JSONObject parameters = new JSONObject();
-        if(Update.latestId > 0) parameters.put("offset", Update.latestId + 1);
-
-        final Response response = this.request("getUpdates", parameters);
-        return JSONHelper.buildStream((JSONArray) response.getResult(), JSONObject.class).map(Update::create).collect(Collectors.toList());
-    }
-
-    public Message sendMessage(final MessageOption messageOption){
-        final Response response = this.request("sendMessage", messageOption.getParameters());
-        return Message.create((JSONObject) response.getResult());
     }
 }

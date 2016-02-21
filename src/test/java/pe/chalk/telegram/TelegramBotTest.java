@@ -1,10 +1,11 @@
 package pe.chalk.telegram;
 
 import org.junit.Test;
+import pe.chalk.telegram.method.MeGetter;
 import pe.chalk.telegram.type.message.Message;
 import pe.chalk.telegram.type.message.TextMessage;
 import pe.chalk.telegram.type.user.User;
-import pe.chalk.telegram.util.MessageOption;
+import pe.chalk.telegram.method.TextMessageSender;
 import pe.chalk.telegram.util.ParseMode;
 
 import java.io.OutputStream;
@@ -49,7 +50,7 @@ public class TelegramBotTest {
 
     @Test
     public void testMe(){
-        final User me = bot.getMe();
+        final User me = new MeGetter().get(bot);
         assertNotNull(me);
 
         assertTrue(me.getUsername().toLowerCase().endsWith("bot"));
@@ -79,7 +80,7 @@ public class TelegramBotTest {
         final int chatId = textMessage.getChat().getId();
         final String reply = String.format("\\[%d] Hi, *%d*!", chatId, textMessage.getId());
 
-        final Message sentMessage = bot.sendMessage(new MessageOption(chatId, reply).parseMode(ParseMode.MARKDOWN).replyToMessage(textMessage));
+        final Message sentMessage = new TextMessageSender(chatId, reply).parseMode(ParseMode.MARKDOWN).replyToMessage(textMessage).send(bot);
         assertEquals((long) chatId, (long) sentMessage.getChat().getId());
     }
 

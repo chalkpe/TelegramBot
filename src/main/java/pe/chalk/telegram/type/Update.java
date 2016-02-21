@@ -5,6 +5,8 @@ import pe.chalk.telegram.type.inline.ChosenInlineResult;
 import pe.chalk.telegram.type.inline.InlineQuery;
 import pe.chalk.telegram.type.message.Message;
 
+import java.util.Objects;
+
 /**
  * @author ChalkPE <chalkpe@gmail.com>
  * @since 2016-02-02
@@ -43,7 +45,15 @@ public class Update implements Identified<Integer> {
         return this.inlineQuery;
     }
 
+    public boolean hasInlineQuery(){
+        return Objects.nonNull(this.getInlineQuery());
+    }
+
     public ChosenInlineResult getChosenInlineResult(){
         return this.chosenInlineResult;
+    }
+
+    public boolean hasChosenInlineResult(){
+        return Objects.nonNull(this.getChosenInlineResult());
     }
 }
