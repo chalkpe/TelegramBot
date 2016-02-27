@@ -72,6 +72,7 @@ public class TelegramBot extends Thread {
         return this.handlers.add(handler);
     }
 
+    @SuppressWarnings("unused")
     public boolean removeHandler(final UpdateHandler handler){
         return this.handlers.remove(handler);
     }
