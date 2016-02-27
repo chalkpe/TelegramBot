@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2016  ChalkPE
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package pe.chalk.telegram;
 
 import org.junit.Test;
@@ -9,7 +26,6 @@ import pe.chalk.telegram.type.user.User;
 import pe.chalk.telegram.method.TextMessageSender;
 import pe.chalk.telegram.util.ParseMode;
 
-import java.io.OutputStream;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -25,32 +41,10 @@ public class TelegramBotTest {
     private final String token = System.getenv("TelegramBotToken");
     private final TelegramBot bot;
 
-    private final Level level = Level.ALL;
     private Logger logger;
-
     public TelegramBotTest(){
-        this.initLogger();
         bot = new TelegramBot(token);
-    }
-
-    private class StandardHandler extends ConsoleHandler {
-        public StandardHandler(){
-            this.setLevel(level);
-        }
-
-        @Override
-        protected synchronized void setOutputStream(final OutputStream out) throws SecurityException {
-            super.setOutputStream(System.out);
-        }
-    }
-
-    public void initLogger(){
-        logger = Logger.getLogger("TelegramBot");
-        for(Handler handler: logger.getHandlers()) logger.removeHandler(handler);
-
-        logger.setUseParentHandlers(false);
-        logger.addHandler(new StandardHandler());
-        logger.setLevel(level);
+        logger = bot.initLogger(Level.ALL);
     }
 
     @Test

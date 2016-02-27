@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2016  ChalkPE
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package pe.chalk.telegram;
 
 import org.json.JSONObject;
@@ -16,6 +33,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -85,16 +105,42 @@ public class TelegramBot extends Thread {
                 try(final OutputStream stream = connection.getOutputStream()){
                     stream.write(parameters.toString().getBytes(StandardCharsets.UTF_8));
                 }
-                Logger.getLogger("TelegramBot").finest(String.format("%s%n", parameters.toString(2)));
+                this.getLogger().finest(String.format("%s%n", parameters.toString(2)));
             }
 
             final JSONObject response = new JSONObject(new JSONTokener(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8)));
-            Logger.getLogger("TelegramBot").finer(String.format("%s%n", response.toString(2)));
+            this.getLogger().finer(String.format("%s%n", response.toString(2)));
 
             return Response.create(response);
         }catch(IOException e){
             e.printStackTrace();
             return null;
         }
+    }
+
+    private class StandardHandler extends ConsoleHandler {
+        public StandardHandler(final Level level){
+            this.setLevel(level);
+        }
+
+        @Override
+        protected synchronized void setOutputStream(final OutputStream ignored) throws SecurityException {
+            super.setOutputStream(System.out);
+        }
+    }
+
+    public Logger getLogger(){
+        return Logger.getLogger(this.getClass().getCanonicalName());
+    }
+
+    public Logger initLogger(final Level level){
+        final Logger logger = this.getLogger();
+        for(Handler handler: logger.getHandlers()) logger.removeHandler(handler);
+
+        logger.setUseParentHandlers(false);
+        logger.addHandler(new StandardHandler(level));
+        logger.setLevel(level);
+
+        return logger;
     }
 }
