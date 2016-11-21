@@ -24,7 +24,7 @@ import pe.chalk.telegram.type.Identified;
  * @author ChalkPE <chalkpe@gmail.com>
  * @since 2016-02-02
  */
-public abstract class Chat implements Identified<Integer> {
+public abstract class Chat implements Identified<Long> {
     public class Type {
         public static final String PRIVATE = "private";
         public static final String GROUP = "group";
@@ -32,11 +32,11 @@ public abstract class Chat implements Identified<Integer> {
         public static final String CHANNEL = "channel";
     }
 
-    private final int id;
+    private final long id;
     private final String type;
 
     protected Chat(final JSONObject json){
-        this.id   = json.getInt("id");
+        this.id   = json.getLong("id");
         this.type = json.getString("type");
     }
 
@@ -59,7 +59,7 @@ public abstract class Chat implements Identified<Integer> {
         }
     }
 
-    public Integer getId(){
+    public Long getId(){
         return this.id;
     }
 

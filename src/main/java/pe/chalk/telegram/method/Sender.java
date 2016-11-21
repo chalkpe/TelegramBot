@@ -30,7 +30,7 @@ import pe.chalk.telegram.type.chat.Chat;
 public abstract class Sender<T, S extends Sender<T, S>> {
     protected final JSONObject parameters = new JSONObject();
 
-    public Sender(final int chatId){
+    public Sender(final long chatId){
         this.chatId(chatId);
     }
 
@@ -42,7 +42,7 @@ public abstract class Sender<T, S extends Sender<T, S>> {
         this.chat(chat);
     }
 
-    public final S chatId(final int chatId){
+    public final S chatId(final long chatId){
         this.parameters.put("chat_id", chatId);
         return (S) this;
     }

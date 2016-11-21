@@ -32,7 +32,7 @@ import java.util.Objects;
  * @since 2016-02-19
  */
 public class TextMessageSender extends MessageSender<TextMessage, TextMessageSender> {
-    public TextMessageSender(final int chatId, final String text){
+    public TextMessageSender(final long chatId, final String text){
         super(chatId);
         this.text(text);
     }

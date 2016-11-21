@@ -27,7 +27,7 @@ import pe.chalk.telegram.type.message.Message;
  * @since 2016-02-21
  */
 public abstract class MessageSender<T extends Message, S extends Sender<T, S>> extends Sender<T, S> {
-    public MessageSender(int chatId){
+    public MessageSender(long chatId){
         super(chatId);
     }
 

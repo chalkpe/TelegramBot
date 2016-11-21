@@ -88,7 +88,7 @@ public class TelegramBotTest {
         final TextMessage textMessage = future.get(1, TimeUnit.MINUTES);
         assertEquals("@Test hello!", textMessage.getText());
 
-        final int chatId = textMessage.getChat().getId();
+        final long chatId = textMessage.getChat().getId();
         final String reply = String.format("<b>[%d]</b> <a href=\"https://github.com/ChalkPE/TelegramBot\">Test</a> <i>passed!</i>\n\n%s%s%sI'm on <b>%d</b>%s.",
                 textMessage.getId(),
                 textMessage.hasFrom() ? ("Hi, <b>" + encodeHTMLEntities(textMessage.getFrom().getFullName()) + "</b>") : "",
@@ -98,7 +98,7 @@ public class TelegramBotTest {
                 (textMessage.getChat() instanceof TitledChat) ? (", where the title is <b>" + encodeHTMLEntities(((TitledChat) textMessage.getChat()).getTitle()) + "</b>") : "");
 
         final Message sentMessage = new TextMessageSender(chatId, reply).parseMode(ParseMode.HTML).replyToMessage(textMessage).disableWebPagePreview(true).send(bot);
-        assertEquals((long) chatId, (long) sentMessage.getChat().getId());
+        assertEquals(chatId, (long) sentMessage.getChat().getId());
     }
 
     @Test
