@@ -24,7 +24,9 @@ import pe.chalk.telegram.type.Response;
 import pe.chalk.telegram.type.Update;
 import pe.chalk.telegram.util.JSONHelper;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -37,6 +39,8 @@ public class UpdateGetter {
         if(Update.latestId > 0) parameters.put("offset", Update.latestId + 1);
 
         final Response response = bot.request("getUpdates", parameters);
+
+        if(Objects.isNull(response)) return Collections.emptyList();
         return JSONHelper.buildStream((JSONArray) response.getResult(), JSONObject.class).map(Update::create).collect(Collectors.toList());
     }
 }

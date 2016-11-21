@@ -66,6 +66,8 @@ public class TextMessageSender extends MessageSender<TextMessage, TextMessageSen
     @Override
     public TextMessage send(TelegramBot bot){
         final Response response = bot.request("sendMessage", this.getParameters());
+
+        if(Objects.isNull(response)) return null;
         return (TextMessage) Message.create((JSONObject) response.getResult());
     }
 }
